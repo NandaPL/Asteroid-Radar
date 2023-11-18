@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="clickListener"
+            type="com.udacity.asteroidradar.ui.main.AsteroidsAdapter.AsteroidClickListener" />
+
+        <variable
+            name="asteroids"
+            type="com.udacity.asteroidradar.Asteroid" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(asteroids)}"
+        android:background="@color/app_background">
+
+        <TextView
+            android:id="@+id/tv_asteroid_name"
+            style="@style/AsteroidItemTextTitle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="@dimen/asteroid_name_margin_top"
+            android:textSize="@dimen/asteroid_name_text_size"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:text="@{asteroids.codename}"
+            android:textColor="@color/asteroid_item_text_color"
+            tools:text="@string/asteroid_name" />
+
+        <TextView
+            android:id="@+id/tv_asteroid_date"
+            style="@style/AsteroidItemTextTitle"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="@dimen/text_size"
+            android:alpha="0.8"
+            android:text="@{asteroids.closeApproachDate}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_asteroid_name"
+            tools:text="@string/asteroid_date" />
+
+        <ImageView
+            android:id="@+id/iv_asteroid_hazard"
+            android:layout_width="wrap_content"
+            android:visibility="visible"
+            android:contentDescription="@string/asteroid_icon_description"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_asteroid_date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_asteroid_name"
+            android:layout_marginEnd="@dimen/asteroid_item_margin_end"
+            app:statusIcon="@{asteroids.potentiallyHazardous}"
+            tools:srcCompat="@drawable/ic_status_potentially_hazardous" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
