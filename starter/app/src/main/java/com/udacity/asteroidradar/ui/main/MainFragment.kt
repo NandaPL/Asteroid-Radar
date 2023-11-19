@@ -1,6 +1,7 @@
 package com.udacity.asteroidradar.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.navigation.fragment.findNavController
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -12,6 +13,7 @@ import com.udacity.asteroidradar.databinding.FragmentMainBinding
 import com.udacity.asteroidradar.displayPictureOfDay
 
 class MainFragment : Fragment() {
+    private val TAG = MainFragment::class.java.name
 
     private lateinit var asteroidAdapter: AsteroidsAdapter
     private lateinit var dataBinding: FragmentMainBinding
@@ -32,9 +34,13 @@ class MainFragment : Fragment() {
         )
         setHasOptionsMenu(true)
         dataBinding.lifecycleOwner = viewLifecycleOwner
-        mViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
-        mViewModel.pictureOfDay.observe(viewLifecycleOwner) {
-            displayPictureOfDay(dataBinding.activityMainImageOfTheDay, it)
+        mViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        mViewModel.pictureOfDay.observe(viewLifecycleOwner) { pictureOfTheDay ->
+            pictureOfTheDay?.let {
+                dataBinding.activityMainImageOfTheDay.let { imageView ->
+                    displayPictureOfDay(imageView, it)
+                }
+            } ?: Log.e(TAG, "pictureOfDay is null")
         }
         asteroidAdapter = AsteroidsAdapter(AsteroidsAdapter.AsteroidClickListener { asteroid ->
             mViewModel.onAsteroidClicked(asteroid)

@@ -1,6 +1,7 @@
 package com.udacity.asteroidradar.ui.main
 
 import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     application: Application
-) : ViewModel() {
+) : AndroidViewModel(application) {
     private val asteroidDatabase = AsteroidDatabase.getDatabase(application)
     private val asteroidApi = AsteroidApi.retrofitService
     private val pictureOfDayRepository = PictureOfDayRepository(asteroidApi, asteroidDatabase)

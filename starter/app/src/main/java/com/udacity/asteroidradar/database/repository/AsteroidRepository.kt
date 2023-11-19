@@ -19,15 +19,17 @@ class AsteroidRepository(private val asteroidApi: AsteroidApiService, private va
     val asteroids: LiveData<List<Asteroid>> = asteroidDAO.getAllAsteroids()
 
     suspend fun refreshAsteroids(startDate: String = getToday(), endDate: String = getFinalDate()){
+        var asteroidList: ArrayList<Asteroid>
         withContext(Dispatchers.IO) {
-            val asteroidsResponseBody = asteroidApi.getAsteroidsAsync(
+            val asteroidsResponseBody = asteroidApi.getAllAsteroids(
                 Constants.API_KEY,
                 startDate, endDate
-            ).await()
+            )
 
-            val nasaAsteroidList = parseAsteroidsJsonResult(JSONObject(asteroidsResponseBody.string()))
-
-            asteroidDAO.insertAll(nasaAsteroidList)
+            asteroidsResponseBody.body()?.let {
+                asteroidList = parseAsteroidsJsonResult(JSONObject(asteroidsResponseBody.toString()))
+                asteroidDAO.insertAll(asteroidList)
+            }
         }
     }
 
@@ -47,9 +49,10 @@ class PictureOfDayRepository(private val asteroidApiService: AsteroidApiService,
 
     suspend fun refreshPictureOfThisDay() {
         withContext(Dispatchers.IO) {
-            val pictureResponseBody = asteroidApiService.getPictureOfTheDayAsync(Constants.API_KEY).await()
-            pictureDAO.insertPictureOfDay(pictureResponseBody)
-
+            val pictureResponseBody = asteroidApiService.getPictureOfTheDay(Constants.API_KEY)
+            pictureResponseBody.body()?.let {
+                pictureDAO.insertPictureOfDay(it)
+            }
         }
     }
 
