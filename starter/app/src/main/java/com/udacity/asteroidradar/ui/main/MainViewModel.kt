@@ -1,17 +1,18 @@
 package com.udacity.asteroidradar.ui.main
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.PictureOfDay
+import com.udacity.asteroidradar.Constants
 import com.udacity.asteroidradar.api.AsteroidApi
 import com.udacity.asteroidradar.database.AsteroidDatabase
 import com.udacity.asteroidradar.database.repository.AsteroidRepository
 import com.udacity.asteroidradar.database.repository.PictureOfDayRepository
+import com.udacity.asteroidradar.getFinalDate
 import com.udacity.asteroidradar.getToday
 import kotlinx.coroutines.launch
 
@@ -36,7 +37,7 @@ class MainViewModel(
     init {
         getAsteroidsOfWeek()
         viewModelScope.launch {
-            asteroidRepository.refreshAsteroids()
+            refreshAsteroids(getToday(), getFinalDate())
             refreshPicture()
         }
     }
@@ -73,5 +74,12 @@ class MainViewModel(
                 _currentAsteroids.value = it
             }
         }
+    }
+
+    fun refreshAsteroids(startDate: String, endDate: String) {
+        viewModelScope.launch {
+            asteroidRepository.refreshAsteroids(startDate, endDate)
+        }
+
     }
 }

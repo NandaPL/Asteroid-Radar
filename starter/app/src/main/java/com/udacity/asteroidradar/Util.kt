@@ -20,7 +20,7 @@ fun getFinalDate(): String {
 }
 
 private fun formatDate(date: Date): String {
-    val dateFormat = SimpleDateFormat("yyyy-mm-dd", Locale.getDefault())
+    val dateFormat = SimpleDateFormat("YYYY-MM-dd", Locale.getDefault())
     return dateFormat.format(date)
 }
 

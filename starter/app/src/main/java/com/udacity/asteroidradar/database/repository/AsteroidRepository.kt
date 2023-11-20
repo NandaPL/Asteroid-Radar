@@ -1,5 +1,6 @@
 package com.udacity.asteroidradar.database.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.udacity.asteroidradar.Asteroid
 import com.udacity.asteroidradar.Constants
@@ -7,8 +8,6 @@ import com.udacity.asteroidradar.PictureOfDay
 import com.udacity.asteroidradar.api.AsteroidApiService
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidDatabase
-import com.udacity.asteroidradar.getFinalDate
-import com.udacity.asteroidradar.getToday
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -18,17 +17,25 @@ class AsteroidRepository(private val asteroidApi: AsteroidApiService, private va
 
     val asteroids: LiveData<List<Asteroid>> = asteroidDAO.getAllAsteroids()
 
-    suspend fun refreshAsteroids(startDate: String = getToday(), endDate: String = getFinalDate()){
-        var asteroidList: ArrayList<Asteroid>
+    suspend fun refreshAsteroids(startDate: String, endDate: String){
         withContext(Dispatchers.IO) {
-            val asteroidsResponseBody = asteroidApi.getAllAsteroids(
-                Constants.API_KEY,
-                startDate, endDate
-            )
+            try {
+                val asteroidsResponseBody = asteroidApi.getAllAsteroids(startDate, endDate,
+                    Constants.API_KEY,
+                )
 
-            asteroidsResponseBody.body()?.let {
-                asteroidList = parseAsteroidsJsonResult(JSONObject(asteroidsResponseBody.toString()))
-                asteroidDAO.insertAll(asteroidList)
+
+                asteroidsResponseBody.body()?.string()?.let {
+                    val jsonObject= JSONObject(it)
+                    val asteroidList = parseAsteroidsJsonResult(jsonObject)
+
+                    withContext(Dispatchers.Default) {
+                        asteroidDAO.insertAll(asteroidList)
+                    }
+                }
+
+            } catch (e: Exception) {
+                Log.e("AsteroidApiService", "Exception: ${e.message}")
             }
         }
     }

@@ -17,14 +17,14 @@ import java.util.concurrent.TimeUnit
 interface AsteroidApiService {
     @GET(Constants.GET_NASA_ASTEROID)
     suspend fun getAllAsteroids(
-        @Query("api_key") apiKey: String = Constants.API_KEY,
         @Query("start_date") startDate: String,
-        @Query("end_date") endDate: String
+        @Query("end_date") endDate: String,
+        @Query("api_key") apiKey: String
     ): Response<ResponseBody>
 
     @GET(Constants.PLANETARY_POD)
     suspend fun getPictureOfTheDay(
-        @Query("api_key") apiKey: String = Constants.API_KEY
+        @Query("api_key") apiKey: String
     ): Response<PictureOfDay>
 }
 
